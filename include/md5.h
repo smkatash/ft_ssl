@@ -12,6 +12,7 @@
 # define B_CONST 0xefcdab89
 # define C_CONST 0x98badcfe
 # define D_CONST 0x10325476
+# define MAX_CHUNK_SIZE 64
 
 /* bit-manipulation functions defined by the MD5 algorithm */
 # define F(X, Y, Z) ((X & Y) | (~X & Z))
@@ -37,9 +38,10 @@ typedef struct {
     uint8_t     digest[16];
 } md5_ctx;
 
-void    md5(const uint8_t *input, size_t input_size, uint8_t *result);
-void	bytes_to_32bit_words(uint32_t *dest, uint8_t *src);
-void	bytes_from_32bit_words(uint8_t *dest, uint32_t *src);
+void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result);
+void    md5_file(FILE *file, uint8_t *result);
+void	bytes_to_32bit_words(uint32_t *dest, uint8_t *src, size_t max_len);
+void	bytes_from_32bit_words(uint8_t *dest, uint32_t *src, size_t max_len);
 void    print_bits(const uint8_t *msg, size_t len) ;
 
 #endif

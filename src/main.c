@@ -7,6 +7,16 @@ void print_hash(uint8_t *p){
     printf("\n");
 }
 
+void    md5_input(t_ssl *data)
+{
+    if (data->input && strlen(data->input) > 0) {
+        md5_string((const uint8_t *)data->input, strlen(data->input), data->result);
+    } else {
+        md5_file(stdin, data->result);
+    }
+    print_hash(data->result);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -18,9 +28,8 @@ int main(int argc, char **argv)
     memset(&data, 0, sizeof(data));
     parse_input(argv, argc, &data);
     debug_data(&data);
-    if(data.cmd == MD5 && data.input)
+    if(data.cmd == MD5)
     {
-        md5((const uint8_t *)data.input, strlen(data.input), data.result);
-        print_hash(data.result);
+       md5_input(&data);
     }
 }

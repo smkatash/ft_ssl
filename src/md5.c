@@ -27,6 +27,7 @@ static const unsigned int radians_const[64] = { 0xd76aa478, 0xe8c7b756, 0x242070
 */
 static void	md5_init(md5_ctx *context)
 {
+	context->size = 0;
 	context->state[0] = A_CONST;
 	context->state[1] = B_CONST;
 	context->state[2] = C_CONST;
@@ -92,7 +93,7 @@ static void	md5_update(md5_ctx *context, const uint8_t *input, size_t input_len)
 		
 		if (idx % 64 == 0)
 		{
-			bytes_to_32bit_words(temp, context->buffer);
+			bytes_to_32bit_words(temp, context->buffer, MAX_CHUNK_SIZE / 4);
 			md5_transform(context->state, temp);
 			idx = 0;
 		}
@@ -119,7 +120,6 @@ static void md5_padding(const uint8_t *src, size_t src_len, uint8_t **dst, size_
     for (size_t i = src_len + 1; i < new_len; i++) {
         (*dst)[i] = 0;
     }
-
     uint64_t src_len_bits = src_len * 8;
     memcpy(*dst + new_len, &src_len_bits, 8);
     *dst_len = new_len + 8;
@@ -127,21 +127,48 @@ static void md5_padding(const uint8_t *src, size_t src_len, uint8_t **dst, size_
 
 static void	md5_final(md5_ctx *context)
 {
-	uint8_t *padded_msg;
-    size_t padded_len;
-
-    md5_padding(context->buffer, context->size % 64, &padded_msg, &padded_len);
-    md5_update(context, padded_msg, padded_len);
-	bytes_from_32bit_words(context->digest, context->state);
-    free(padded_msg);
+	bytes_from_32bit_words(context->digest, context->state, 4);
 }
 
-void    md5(const uint8_t *input, size_t input_size, uint8_t *result)
+void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
 {
-	md5_ctx context;
+	md5_ctx	context;
+	uint8_t	*padded_msg;
+    size_t	padded_len;
 	
 	md5_init(&context);
-	md5_update(&context, input, input_size);
+    md5_padding(input, input_size, &padded_msg, &padded_len);
+	size_t offset = 0;
+    while (offset < padded_len) {
+        size_t chunk_size = (padded_len - offset < MAX_CHUNK_SIZE) ? (padded_len - offset) : MAX_CHUNK_SIZE;
+        md5_update(&context, &padded_msg[offset], chunk_size);
+        offset += MAX_CHUNK_SIZE;
+    }
 	md5_final(&context);
 	memcpy(result, context.digest, sizeof(context.digest));
+	free(padded_msg);
+}
+
+void    md5_file(FILE *file, uint8_t *result)
+{
+	md5_ctx	context;
+	char *buffer = malloc(1024);
+    size_t input_size = 0;
+	uint8_t	*padded_msg;
+    size_t	padded_len;
+	
+	md5_init(&context);
+	while((input_size = fread(buffer, 1, 1024, file)) > 0){
+		md5_padding((const uint8_t*)buffer, input_size, &padded_msg, &padded_len);
+		size_t offset = 0;
+		while (offset < padded_len) {
+			size_t chunk_size = (padded_len - offset < MAX_CHUNK_SIZE) ? (padded_len - offset) : MAX_CHUNK_SIZE;
+			md5_update(&context, &padded_msg[offset], chunk_size);
+			offset += MAX_CHUNK_SIZE;
+		}
+    }
+	md5_final(&context);
+	memcpy(result, context.digest, sizeof(context.digest));
+	free(padded_msg);
+	free(buffer);
 }
