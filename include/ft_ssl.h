@@ -2,6 +2,8 @@
 #define FT_SSL_H
 
 #include "md5.h"
+#include "sha256.h"
+#include <fcntl.h>
 
 # define MAX_FLAGS 4
 # define command_token(cmd) (\
@@ -31,8 +33,10 @@ typedef struct {
 typedef struct s_ssl {
 	options     opt;
 	int         cmd;
+	char        *file;
 	char        *input;
-    uint8_t     result[16];
+    uint8_t     md5_result[16];
+    uint8_t     sha256_result[32];
 } t_ssl;
 
 void	parse_input(char **argv, int argc, t_ssl *data);

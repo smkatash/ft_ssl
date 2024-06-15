@@ -10,13 +10,12 @@ void print_hash(uint8_t *p){
 void    md5_input(t_ssl *data)
 {
     if (data->input && strlen(data->input) > 0) {
-        md5_string((const uint8_t *)data->input, strlen(data->input), data->result);
+        md5_string((const uint8_t *)data->input, strlen(data->input), data->md5_result);
+        print_hash(data->md5_result);
     } else {
-        md5_file(stdin, data->result);
+        md5_file(stdin, data->md5_result);
     }
-    print_hash(data->result);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -31,5 +30,10 @@ int main(int argc, char **argv)
     if(data.cmd == MD5)
     {
        md5_input(&data);
+    } else {
+        sha256((const uint8_t *)data.input, strlen(data.input), data.sha256_result);
+        print_hash(data.sha256_result);
     }
+    printf("Exiting\n");
+    return (0);
 }
