@@ -6,7 +6,7 @@
 #    By: kanykei <kanykei@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/11 11:19:19 by kanykei           #+#    #+#              #
-#    Updated: 2024/06/07 14:56:17 by kanykei          ###   ########.fr        #
+#    Updated: 2024/06/13 19:22:31 by kanykei          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,9 @@ NAME		:= ft_ssl
 
 # ================================ Sources =================================== #
 
-VPATH		:= src
+VPATH		:= src src/md5 src/sha256
 
-SRC			:= main.c parser.c md5.c md5-utils.c
+SRC			:= main.c parser.c md5.c utils.c sha256.c
 
 # ================================ Flags ===================================== #
 OBJ			:= $(addprefix obj/,$(notdir $(SRC:.c=.o)))

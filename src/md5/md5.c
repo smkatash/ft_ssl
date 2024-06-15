@@ -45,7 +45,7 @@ static void	md5_transform(uint32_t *state, uint32_t *input)
 
 	for (unsigned int i = 0; i < 64; i++)
 	{
-		switch(round(i))
+		switch(ROUND(i))
 		{
 			case FIRST_ROUND:
 				F = F(B, C, D);
@@ -68,7 +68,7 @@ static void	md5_transform(uint32_t *state, uint32_t *input)
 		A = D;
 		D = C;
 		C = B;
-		B += rotate_left(F, shifts_per_round[i]);
+		B += ROTATE_LEFT(F, shifts_per_round[i]);
 	}
 	state[0] += A;
     state[1] += B;
@@ -91,9 +91,9 @@ static void	md5_update(md5_ctx *context, const uint8_t *input, size_t input_len)
 	{
 		context->buffer[idx++] = (uint8_t)*(input + i);
 		
-		if (idx % 64 == 0)
+		if (idx == 64)
 		{
-			bytes_to_32bit_words(temp, context->buffer, MAX_CHUNK_SIZE / 4);
+			bytes_to_32bit_words_little_endian(temp, (const void *)context->buffer, MAX_CHUNK_SIZE / 4);
 			md5_transform(context->state, temp);
 			idx = 0;
 		}
@@ -115,6 +115,11 @@ static void md5_padding(const uint8_t *src, size_t src_len, uint8_t **dst, size_
         new_len++;
     }
     *dst = (uint8_t *)malloc(new_len + 8);
+	if (!*dst)
+    {
+        // print error
+        exit(1);
+    }
     memcpy(*dst, src, src_len);
     (*dst)[src_len] = 0x80;
     for (size_t i = src_len + 1; i < new_len; i++) {
@@ -127,7 +132,7 @@ static void md5_padding(const uint8_t *src, size_t src_len, uint8_t **dst, size_
 
 static void	md5_final(md5_ctx *context)
 {
-	bytes_from_32bit_words(context->digest, context->state, 4);
+	bytes_from_32bit_words_little_endian(context->digest, context->state, 4);
 }
 
 void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
