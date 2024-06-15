@@ -1,6 +1,6 @@
 #include "utils.h"
 
-void	bytes_to_32bit_words_little_endian(uint32_t *dest, const void *src, size_t max_len)
+inline void	bytes_to_32bit_words_little_endian(uint32_t *dest, const void *src, size_t max_len)
 {
 	const uint8_t *src_bytes = (const uint8_t *)src;
 	for (size_t j = 0; j < max_len; j++) {
@@ -12,7 +12,7 @@ void	bytes_to_32bit_words_little_endian(uint32_t *dest, const void *src, size_t 
 	}	
 }
 
-void	bytes_to_32bit_words_big_endian(uint32_t *dest, const void *src, size_t max_len)
+inline void	bytes_to_32bit_words_big_endian(uint32_t *dest, const void *src, size_t max_len)
 {
 	const uint8_t *src_bytes = (const uint8_t *)src;
 	for (size_t j = 0; j < max_len; j++) {
@@ -24,7 +24,7 @@ void	bytes_to_32bit_words_big_endian(uint32_t *dest, const void *src, size_t max
 	}	
 }
 
-void	bytes_from_32bit_words_little_endian(uint8_t *dest, const void *src, size_t max_len)
+inline void	bytes_from_32bit_words_little_endian(uint8_t *dest, const void *src, size_t max_len)
 {
 	const uint32_t *src_bytes = (const uint32_t *)src;
 	for (size_t i = 0; i < max_len; i++) {
@@ -35,7 +35,7 @@ void	bytes_from_32bit_words_little_endian(uint8_t *dest, const void *src, size_t
 	}	
 }
 
-void bytes_from_32bit_words_big_endian(uint8_t *dest, const void *src, size_t max_len)
+inline void bytes_from_32bit_words_big_endian(uint8_t *dest, const void *src, size_t max_len)
 {
     const uint32_t *src_bytes = (const uint32_t *)src;
 	for (size_t i = 0; i < max_len; i++) {
@@ -46,7 +46,7 @@ void bytes_from_32bit_words_big_endian(uint8_t *dest, const void *src, size_t ma
     }   
 }
 
-void to_big_endian(uint8_t *dst, const void *src, size_t len)
+inline void to_big_endian(uint8_t *dst, const void *src, size_t len)
 {
     const uint8_t *src_bytes = (const uint8_t *)src;
     for (size_t i = 0; i < len; i++) {
@@ -54,7 +54,7 @@ void to_big_endian(uint8_t *dst, const void *src, size_t len)
     }
 }
 
-void    print_bits(const uint8_t *msg, size_t len) 
+inline void    print_bits(const uint8_t *msg, size_t len) 
 {
 	for (size_t i = 0; i < len; i++) {
 		for (int j = 7; j >= 0; j--) {

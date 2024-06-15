@@ -12,7 +12,9 @@
 # define B_CONST 0xefcdab89
 # define C_CONST 0x98badcfe
 # define D_CONST 0x10325476
+# define MAX_READ_BYTES 1024
 # define MAX_CHUNK_SIZE 64
+# define CHUNK_NO_PADDING 56
 
 /* bit-manipulation functions defined by the MD5 algorithm */
 # define F(X, Y, Z) ((X & Y) | (~X & Z))
@@ -38,7 +40,7 @@ typedef struct {
 } md5_ctx;
 
 void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result);
-void    md5_file(FILE *file, uint8_t *result);
+void    md5_file(int fd, uint8_t *result);
 void    print_bits(const uint8_t *msg, size_t len) ;
 
 #endif

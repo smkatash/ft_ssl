@@ -11,10 +11,10 @@ void    md5_input(t_ssl *data)
 {
     if (data->input && strlen(data->input) > 0) {
         md5_string((const uint8_t *)data->input, strlen(data->input), data->md5_result);
-        print_hash(data->md5_result);
     } else {
-        md5_file(stdin, data->md5_result);
+        md5_file(STDIN_FILENO, data->md5_result);
     }
+    print_hash(data->md5_result);
 }
 
 int main(int argc, char **argv)
