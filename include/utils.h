@@ -2,9 +2,9 @@
 #define UTILS_H
 
 # include <unistd.h>
-# include <string.h>
 # include <stdint.h>
 # include <stdio.h>
+# include "libft.h"
 # define MAX_READ_BUFFER_SIZE 1024
 # define CHUNK_NO_PADDING 56
 # define MAX_CHUNK_SIZE 64

@@ -36,6 +36,7 @@ static const uint8_t padding[64] = {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x
 */
 static void	md5_init(md5_ctx *context)
 {
+	ft_memset(context, 0, sizeof(md5_ctx));
 	context->size = 0;
 	context->state[0] = A_CONST;
 	context->state[1] = B_CONST;
@@ -138,7 +139,7 @@ void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
 	md5_init(&context);
     md5_update(&context, input, input_size);
 	md5_final(&context);
-	memcpy(result, context.digest, sizeof(context.digest));
+	ft_memcpy(result, context.digest, sizeof(context.digest));
 }
 
 void    md5_file(int fd, uint8_t *result)
@@ -152,5 +153,5 @@ void    md5_file(int fd, uint8_t *result)
 		md5_update(&context, (const uint8_t *)buffer, input_size);
     }
 	md5_final(&context);
-	memcpy(result, context.digest, sizeof(context.digest));
+	ft_memcpy(result, context.digest, sizeof(context.digest));
 }

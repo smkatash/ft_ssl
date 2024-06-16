@@ -27,7 +27,7 @@ static const uint8_t padding[64] = {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x
 
 void    sha256_init(sha256_ctx  *context)
 {
-    memset(context, 0, sizeof(sha256_ctx));
+    ft_memset(context, 0, sizeof(sha256_ctx));
     context->size = 0;
 	context->state[0] = hash_values[0];
 	context->state[1] = hash_values[1];
@@ -133,7 +133,7 @@ void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result)
     sha256_init(&context);
     sha256_update(&context, input, input_size);
     sha256_final(&context);
-	memcpy(result, context.digest, sizeof(context.digest));
+	ft_memcpy(result, context.digest, sizeof(context.digest));
 }
 
 void    sha256_file(int fd, uint8_t *result)
@@ -147,5 +147,5 @@ void    sha256_file(int fd, uint8_t *result)
         sha256_update(&context, (const uint8_t *)buffer, input_size);
     }
     sha256_final(&context);
-	memcpy(result, context.digest, sizeof(context.digest));
+	ft_memcpy(result, context.digest, sizeof(context.digest));
 }

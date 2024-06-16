@@ -9,8 +9,8 @@ void print_hash(uint8_t *p, size_t hash_len){
 
 void    md5_input(t_ssl *data)
 {
-    if (data->input && strlen(data->input) > 0) {
-        md5_string((const uint8_t *)data->input, strlen(data->input), data->md5_result);
+    if (data->input && ft_strlen(data->input) > 0) {
+        md5_string((const uint8_t *)data->input, ft_strlen(data->input), data->md5_result);
     } else {
         md5_file(STDIN_FILENO, data->md5_result);
     }
@@ -19,8 +19,8 @@ void    md5_input(t_ssl *data)
 
 void    sha256_input(t_ssl *data)
 {
-    if (data->input && strlen(data->input) > 0) {
-        sha256_string((const uint8_t *)data->input, strlen(data->input), data->sha256_result);
+    if (data->input && ft_strlen(data->input) > 0) {
+        sha256_string((const uint8_t *)data->input, ft_strlen(data->input), data->sha256_result);
     } else {
         sha256_file(STDIN_FILENO, data->sha256_result);
     }
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         exit(1);
     }
     t_ssl data;
-    memset(&data, 0, sizeof(data));
+    ft_memset(&data, 0, sizeof(data));
     parse_input(argv, argc, &data);
     debug_data(&data);
     if(data.cmd == MD5)

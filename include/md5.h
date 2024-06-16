@@ -2,9 +2,7 @@
 # define MD5_H
 # include <stdio.h>
 # include <stdint.h>
-# include <string.h>
 #include <unistd.h>
-#include <string.h>
 #include <stdlib.h>
 #include "utils.h"
 /* magic constants */

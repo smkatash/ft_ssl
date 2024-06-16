@@ -26,7 +26,7 @@ void	parse_input(char **argv, int argc, t_ssl *data)
 		default:
 			if (i == argc - 1)
 			{
-				data->input = strdup(argv[i]);
+				data->input = ft_strdup(argv[i]);
 				break;
 			}
 			// print error

@@ -7,8 +7,8 @@
 
 # define MAX_FLAGS 4
 # define command_token(cmd) (\
-    strcmp((cmd), "md5") == 0 ? MD5 : \
-    strcmp((cmd), "sha256") == 0 ? SHA256 : \
+    ft_strcmp((cmd), "md5") == 0 ? MD5 : \
+    ft_strcmp((cmd), "sha256") == 0 ? SHA256 : \
     0)
 # define APPEND 1
 # define QUIET 2
@@ -17,10 +17,10 @@
 # define MD5 16
 # define SHA256 32
 # define flags_token(cmd) (\
-    strcmp((cmd), "-p") == 0 ? APPEND : \
-    strcmp((cmd), "-q") == 0 ? QUIET : \
-    strcmp((cmd), "-r") == 0? REVERSE : \
-    strcmp((cmd), "-s") == 0 ? SUM  : \
+    ft_strcmp((cmd), "-p") == 0 ? APPEND : \
+    ft_strcmp((cmd), "-q") == 0 ? QUIET : \
+    ft_strcmp((cmd), "-r") == 0? REVERSE : \
+    ft_strcmp((cmd), "-s") == 0 ? SUM  : \
     0)
 
 typedef struct {

@@ -6,59 +6,44 @@
 #    By: kanykei <kanykei@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/11 11:19:19 by kanykei           #+#    #+#              #
-#    Updated: 2024/06/16 17:30:47 by kanykei          ###   ########.fr        #
+#    Updated: 2024/06/16 17:35:19 by kanykei          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # ================================= Target =================================== #
-NAME		:= ft_ssl
+NAME		:= libft.a
 
 # ================================ Sources =================================== #
 
-VPATH		:= src src/md5 src/sha256
-
-SRC			:= main.c parser.c md5.c utils.c sha256.c
+SRC			:= ft_memset.c ft_memcpy.c ft_strcmp.c \
+				ft_strdup.c ft_strlen.c
 
 # ================================ Flags ===================================== #
 OBJ			:= $(addprefix obj/,$(notdir $(SRC:.c=.o)))
 CC			:= gcc
-CFLAGS 		:= -Wall -Wextra -Werror -MMD -MP #-fsanitize=address
-DEPS        := $(OBJ:.o=.d)
-
-# ============================== Libraries ==================================== #
-INCFL		:=	-I./include -I./libft
-LIBS		:= 	-L./libft -lft
-LIBFT		:=	libft/libft.a
+CFLAGS 		:= -Wall -Wextra -Werror
 
 # ================================ Rules ===================================== #
+
 .SILENT:
 
-all: $(NAME) 
+all: $(NAME)
 
-$(NAME)		: $(OBJ) $(LIBFT)
-			$(CC) $(OBJ) $(LIBS) -o $(NAME)
-			@echo "\033[1;32m ft_ssl is compiled \033[0m"
+$(NAME)		: $(OBJ)
+			ar rcs $(NAME) $(OBJ)
 
 obj/%.o		: %.c | obj
-			$(CC) $(CFLAGS) $(INCFL) -c $< -o $@
+			$(CC) $(CFLAGS) -c $< -o $@
 
 obj			:
-			mkdir -p obj
-
-$(LIBFT):
-			- (cd libft && make && make clean)
+			mkdir obj
 
 clean		:
 			rm -rf obj
-			@echo "deleting object files..."
 
 fclean		: clean
 			rm $(NAME)
-			@echo "deleting ft_ssl..."
-			- (cd libft && make fclean)
 
-re			: clean all
+re: fclean all
 
 .PHONY		:	all clean fclean re 
-
--include $(DEPS)
