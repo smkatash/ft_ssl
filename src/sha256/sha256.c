@@ -139,7 +139,7 @@ void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result)
 void    sha256_file(int fd, uint8_t *result)
 {
     sha256_ctx  context;
-    char        buffer[MAX_READ_BUFFER_SIZE + 1];
+    char        buffer[MAX_READ_BUFFER_SIZE];
     size_t      input_size = 0;
 
     sha256_init(&context);

@@ -19,7 +19,7 @@
 # define flags_token(cmd) (\
     ft_strcmp((cmd), "-p") == 0 ? APPEND : \
     ft_strcmp((cmd), "-q") == 0 ? QUIET : \
-    ft_strcmp((cmd), "-r") == 0? REVERSE : \
+    ft_strcmp((cmd), "-r") == 0 ? REVERSE : \
     ft_strcmp((cmd), "-s") == 0 ? SUM  : \
     0)
 
