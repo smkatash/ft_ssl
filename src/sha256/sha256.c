@@ -16,8 +16,18 @@ static const unsigned int round_const[64] = {
    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
+static const uint8_t padding[64] = {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
 void    sha256_init(sha256_ctx  *context)
 {
+    memset(context, 0, sizeof(sha256_ctx));
     context->size = 0;
 	context->state[0] = hash_values[0];
 	context->state[1] = hash_values[1];
@@ -27,27 +37,6 @@ void    sha256_init(sha256_ctx  *context)
 	context->state[5] = hash_values[5];
 	context->state[6] = hash_values[6];
 	context->state[7] = hash_values[7];
-}
-
-static void sha256_padding(const uint8_t *src, size_t src_len, uint8_t **dst, size_t *dst_len) {
-    size_t new_len = src_len + 1;
-    while (new_len % 64 != 56) {
-        new_len++;
-    }
-    *dst = (uint8_t *)malloc(new_len + 8);
-    if (!*dst)
-    {
-        // print error
-        exit(1);
-    }
-    memcpy(*dst, src, src_len);
-    (*dst)[src_len] = 0x80;
-    for (size_t i = src_len + 1; i < new_len; i++) {
-        (*dst)[i] = 0;
-    }
-    uint64_t src_len_bits = src_len * 8;
-    to_big_endian(*dst + new_len, &src_len_bits, sizeof(src_len_bits));
-    *dst_len = new_len + 8;
 }
 
 void    sha256_transform(uint32_t *state, uint32_t *input)
@@ -100,33 +89,63 @@ void    sha256_transform(uint32_t *state, uint32_t *input)
 void    sha256_update(sha256_ctx *context, const uint8_t *input, size_t input_len)
 {
     uint32_t        temp[64];
-    context->size += input_len;
+	unsigned int offset_idx = context->size % MAX_CHUNK_SIZE;
+    context->size += (uint64_t)input_len;
+
+	for (size_t i = 0; i < input_len; i++)
+	{
+		context->buffer[offset_idx++] = input[i];
+		
+		if (offset_idx % MAX_CHUNK_SIZE == 0)
+		{
+            bytes_to_32bit_words_big_endian(temp, context->buffer, MAX_CHUNK_SIZE / 4);
+	        sha256_transform(context->state, temp);
+			offset_idx = 0;
+		}
+	}
     
-	bytes_to_32bit_words_big_endian(temp, input, MAX_CHUNK_SIZE / 4);
-	sha256_transform(context->state, temp);
+}
+
+void sha256_update_padding(sha256_ctx *context)
+{
+    unsigned int offset_idx = context->size % MAX_CHUNK_SIZE;
+	unsigned int padded_len = offset_idx < CHUNK_NO_PADDING ? CHUNK_NO_PADDING - offset_idx : (CHUNK_NO_PADDING + MAX_CHUNK_SIZE) - offset_idx;
+	sha256_update(context, padding, padded_len);
+	context->size -= (uint64_t)padded_len;
+    uint32_t temp[64];
+    bytes_to_32bit_words_big_endian(temp, context->buffer, (MAX_CHUNK_SIZE / 4) - 2);
+    uint64_t size_bits = context->size * 8;
+    temp[14] = (uint32_t)(size_bits >> 32);
+    temp[15] = (uint32_t)size_bits;
+    sha256_transform(context->state, temp);
 }
 // digest := hash := h0 append h1 append h2 append h3 append h4 append h5 append h6 append h7
 void    sha256_final(sha256_ctx *context)
 {
+    sha256_update_padding(context);
     bytes_from_32bit_words_big_endian(context->digest, context->state, 8);
 }
 
-void    sha256(const uint8_t *input, size_t input_size, uint8_t *result)
+void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result)
 {
     sha256_ctx  context;
-    uint8_t     *padded_msg;
-    size_t      padded_len;
-    size_t      offset = 0;
-    size_t      chunk_size = 0;
 
     sha256_init(&context);
-    sha256_padding(input, input_size, &padded_msg, &padded_len);
-    while (offset < padded_len) {
-        chunk_size = (padded_len - offset < MAX_CHUNK_SIZE) ? (padded_len - offset) : MAX_CHUNK_SIZE;
-        sha256_update(&context, &padded_msg[offset], chunk_size);
-        offset += MAX_CHUNK_SIZE;
+    sha256_update(&context, input, input_size);
+    sha256_final(&context);
+	memcpy(result, context.digest, sizeof(context.digest));
+}
+
+void    sha256_file(int fd, uint8_t *result)
+{
+    sha256_ctx  context;
+    char        buffer[MAX_READ_BUFFER_SIZE + 1];
+    size_t      input_size = 0;
+
+    sha256_init(&context);
+    while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0){
+        sha256_update(&context, (const uint8_t *)buffer, input_size);
     }
     sha256_final(&context);
 	memcpy(result, context.digest, sizeof(context.digest));
-    free(padded_msg);
 }

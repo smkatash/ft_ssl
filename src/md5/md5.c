@@ -114,12 +114,14 @@ static void	md5_update_padding(md5_ctx *context)
 	unsigned int offset_idx = context->size % MAX_CHUNK_SIZE;
 	unsigned int padded_len = offset_idx < CHUNK_NO_PADDING ? CHUNK_NO_PADDING - offset_idx : (CHUNK_NO_PADDING + MAX_CHUNK_SIZE) - offset_idx;
 	md5_update(context, padding, padded_len);
-	uint32_t temp[16];
 	context->size -= (uint64_t)padded_len;
+	uint32_t temp[16];
 	bytes_to_32bit_words_little_endian(temp, context->buffer, (MAX_CHUNK_SIZE / 4) - 2);
-	// last 64bits for size
-	temp[14] = (uint32_t)(context->size * 8);
-    temp[15] = (uint32_t)((context->size * 8) >> 32);
+	// append original length in bits mod 2^64
+	uint64_t size_bits = context->size * 8;
+	// lower and upper 32 bits
+	temp[14] = (uint32_t)(size_bits);
+    temp[15] = (uint32_t)(size_bits >> 32);
 	md5_transform(context->state, temp);
 }
 
@@ -142,11 +144,11 @@ void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
 void    md5_file(int fd, uint8_t *result)
 {
 	md5_ctx	context;
-	char	buffer[MAX_READ_BYTES + 1];
+	char	buffer[MAX_READ_BUFFER_SIZE + 1];
     size_t input_size = 0;
 	
 	md5_init(&context);
-	while((input_size = read(fd, buffer, MAX_READ_BYTES)) > 0){
+	while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0){
 		md5_update(&context, (const uint8_t *)buffer, input_size);
     }
 	md5_final(&context);

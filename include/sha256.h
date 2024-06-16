@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "utils.h"
-# define MAX_CHUNK_SIZE 64
+
 # define ROTATE_RIGHT(a,b) (((a) >> (b)) | ((a) << (32-(b))))
 # define SHIFT_RIGHT(x, n) (x >> n)
 # define XOR ^
@@ -22,6 +22,6 @@ typedef struct {
 } sha256_ctx;
 
 
-void    sha256(const uint8_t *input, size_t input_size, uint8_t *result);
-
+void    sha256_file(int fd, uint8_t *result);
+void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result);
 #endif

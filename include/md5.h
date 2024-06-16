@@ -12,9 +12,6 @@
 # define B_CONST 0xefcdab89
 # define C_CONST 0x98badcfe
 # define D_CONST 0x10325476
-# define MAX_READ_BYTES 1024
-# define MAX_CHUNK_SIZE 64
-# define CHUNK_NO_PADDING 56
 
 /* bit-manipulation functions defined by the MD5 algorithm */
 # define F(X, Y, Z) ((X & Y) | (~X & Z))

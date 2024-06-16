@@ -14,8 +14,8 @@
 # define QUIET 2
 # define REVERSE 3
 # define SUM 4
-# define MD5 5
-# define SHA256 6
+# define MD5 16
+# define SHA256 32
 # define flags_token(cmd) (\
     strcmp((cmd), "-p") == 0 ? APPEND : \
     strcmp((cmd), "-q") == 0 ? QUIET : \
