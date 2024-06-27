@@ -15,6 +15,9 @@
         "string_view": "c",
         "unordered_map": "c",
         "vector": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "sstream": "c",
+        "sha256.h": "c",
+        "ft_ssl.h": "c"
     }
 }

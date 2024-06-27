@@ -119,14 +119,14 @@ void sha256_update_padding(sha256_ctx *context)
     temp[15] = (uint32_t)size_bits;
     sha256_transform(context->state, temp);
 }
-// digest := hash := h0 append h1 append h2 append h3 append h4 append h5 append h6 append h7
+
 void    sha256_final(sha256_ctx *context)
 {
     sha256_update_padding(context);
     bytes_from_32bit_words_big_endian(context->digest, context->state, 8);
 }
 
-void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result)
+void    sha256_str_func(const uint8_t *input, size_t input_size, uint8_t *result)
 {
     sha256_ctx  context;
 
@@ -136,16 +136,23 @@ void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result)
 	ft_memcpy(result, context.digest, sizeof(context.digest));
 }
 
-void    sha256_file(int fd, uint8_t *result)
+char*    sha256_file_func(int fd, uint8_t *result)
 {
     sha256_ctx  context;
-    char        buffer[MAX_READ_BUFFER_SIZE];
+    char        buffer[MAX_READ_BUFFER_SIZE + 1];
     size_t      input_size = 0;
+    char 	*input = NULL;
 
     sha256_init(&context);
     while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0){
         sha256_update(&context, (const uint8_t *)buffer, input_size);
+        if (fd == STDIN_FILENO && buffer[input_size - 1] == '\n')
+			buffer[input_size - 1] = '\0';
+		else 
+			buffer[input_size] = '\0';
+        input = ft_strjoin(input, buffer);
     }
     sha256_final(&context);
 	ft_memcpy(result, context.digest, sizeof(context.digest));
+    return input;
 }

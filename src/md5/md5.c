@@ -132,7 +132,7 @@ static void	md5_final(md5_ctx *context)
 	bytes_from_32bit_words_little_endian(context->digest, context->state, 4);
 }
 
-void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
+void    md5_str_func(const uint8_t *input, size_t input_size, uint8_t *result)
 {
 	md5_ctx	context;
 	
@@ -142,16 +142,23 @@ void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result)
 	ft_memcpy(result, context.digest, sizeof(context.digest));
 }
 
-void    md5_file(int fd, uint8_t *result)
+char *md5_file_func(int fd, uint8_t *result)
 {
 	md5_ctx	context;
 	char	buffer[MAX_READ_BUFFER_SIZE + 1];
-    size_t input_size = 0;
+    size_t	input_size = 0;
+	char 	*input = NULL;
 	
 	md5_init(&context);
 	while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0){
 		md5_update(&context, (const uint8_t *)buffer, input_size);
+		if (fd == STDIN_FILENO && buffer[input_size - 1] == '\n')
+			buffer[input_size - 1] = '\0';
+		else 
+			buffer[input_size] = '\0';
+		input = ft_strjoin(input, buffer);
     }
 	md5_final(&context);
 	ft_memcpy(result, context.digest, sizeof(context.digest));
+	return input;
 }

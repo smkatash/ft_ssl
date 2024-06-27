@@ -45,27 +45,3 @@ inline void bytes_from_32bit_words_big_endian(uint8_t *dest, const void *src, si
         dest[i * 4 + 3] = src_bytes[i] & 0xFF;
     }   
 }
-
-void	print_hex(uint8_t *p, size_t hash_len) 
-{
-    size_t new_len = hash_len * 2 + 1;
-	char hex_output[new_len];
-	char hex_chars[] = "0123456789abcdef";
-
-	for (size_t i = 0; i < hash_len; ++i) {
-        hex_output[i * 2] = hex_chars[(p[i] >> 4) & 0xF];
-        hex_output[i * 2 + 1] = hex_chars[p[i] & 0xF];
-    }
-    hex_output[hash_len * 2] = '\n';
-    write(STDOUT_FILENO, hex_output, new_len);
-}
-
-void	print_error(const char *msg)
-{
-	write(STDERR_FILENO, msg, ft_strlen(msg));
-}
-
-void	print_str(const char *msg)
-{
-	write(STDOUT_FILENO, msg, ft_strlen(msg));
-}

@@ -34,8 +34,8 @@ typedef struct {
 	uint8_t		digest[16];
 } md5_ctx;
 
-void    md5_string(const uint8_t *input, size_t input_size, uint8_t *result);
-void    md5_file(int fd, uint8_t *result);
+void    md5_str_func(const uint8_t *input, size_t input_size, uint8_t *result);
+char	*md5_file_func(int fd, uint8_t *result);
 void    print_bits(const uint8_t *msg, size_t len) ;
 
 #endif

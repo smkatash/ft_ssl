@@ -20,6 +20,6 @@ typedef struct {
 } sha256_ctx;
 
 
-void    sha256_file(int fd, uint8_t *result);
-void    sha256_string(const uint8_t *input, size_t input_size, uint8_t *result);
+char*   sha256_file_func(int fd, uint8_t *result);
+void    sha256_str_func(const uint8_t *input, size_t input_size, uint8_t *result);
 #endif

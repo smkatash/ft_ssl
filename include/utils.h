@@ -13,8 +13,5 @@ void	bytes_to_32bit_words_little_endian(uint32_t *dest, const void *src, size_t 
 void	bytes_to_32bit_words_big_endian(uint32_t *dest, const void *src, size_t max_len);
 void	bytes_from_32bit_words_little_endian(uint8_t *dest, const void *src, size_t max_len);
 void    bytes_from_32bit_words_big_endian(uint8_t *dest, const void *src, size_t max_len);
-void	print_hex(uint8_t *p, size_t hash_len);
-void	print_str(const char *msg);
-void	print_error(const char *msg);
 
 #endif
