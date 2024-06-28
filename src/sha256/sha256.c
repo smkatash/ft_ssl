@@ -46,8 +46,8 @@ void    sha256_transform(uint32_t *state, uint32_t *input)
     
     for (size_t i = 16; i < MAX_CHUNK_SIZE; i++)
     {
-        s0 = ROTATE_RIGHT(input[i - 15], 7) XOR ROTATE_RIGHT(input[i - 15], 18) XOR SHIFT_RIGHT(input[i - 15], 3);
-        s1 = ROTATE_RIGHT(input[i - 2], 17) XOR ROTATE_RIGHT(input[i - 2], 19) XOR SHIFT_RIGHT(input[i - 2], 10);
+        s0 = ROTATE_RIGHT_32(input[i - 15], 7) XOR ROTATE_RIGHT_32(input[i - 15], 18) XOR SHIFT_RIGHT(input[i - 15], 3);
+        s1 = ROTATE_RIGHT_32(input[i - 2], 17) XOR ROTATE_RIGHT_32(input[i - 2], 19) XOR SHIFT_RIGHT(input[i - 2], 10);
         input[i] = input[i - 16] + s0 + input[i - 7] + s1;
     }
 
@@ -63,9 +63,9 @@ void    sha256_transform(uint32_t *state, uint32_t *input)
     uint32_t tmp1, tmp2;
     for (size_t i = 0; i < MAX_CHUNK_SIZE; i++)
     {
-        s1 = ROTATE_RIGHT(e, 6) XOR ROTATE_RIGHT(e, 11) XOR ROTATE_RIGHT(e, 25);
+        s1 = ROTATE_RIGHT_32(e, 6) XOR ROTATE_RIGHT_32(e, 11) XOR ROTATE_RIGHT_32(e, 25);
         tmp1 = h + s1 + CH(e, f ,g) + round_const[i] + input[i];
-        s0 = ROTATE_RIGHT(a, 2) XOR ROTATE_RIGHT(a, 13) XOR ROTATE_RIGHT(a, 22);
+        s0 = ROTATE_RIGHT_32(a, 2) XOR ROTATE_RIGHT_32(a, 13) XOR ROTATE_RIGHT_32(a, 22);
         tmp2 = s0 + MAJ(a, b, c);
         h = g;
         g = f;
@@ -141,16 +141,26 @@ char*    sha256_file_func(int fd, uint8_t *result)
     sha256_ctx  context;
     char        buffer[MAX_READ_BUFFER_SIZE + 1];
     size_t      input_size = 0;
-    char 	*input = NULL;
+    size_t      total_read = 0; 
+    char        *input = NULL;
 
     sha256_init(&context);
-    while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0){
+    while((input_size = read(fd, buffer, MAX_READ_BUFFER_SIZE)) > 0) {
         sha256_update(&context, (const uint8_t *)buffer, input_size);
         if (fd == STDIN_FILENO && buffer[input_size - 1] == '\n')
 			buffer[input_size - 1] = '\0';
 		else 
 			buffer[input_size] = '\0';
-        input = ft_strjoin(input, buffer);
+        input = ft_strjoin(input, buffer); 
+        total_read += input_size;
+    }
+
+    if (!input_size && !total_read) {
+        input = ft_strdup("");
+        sha256_update(&context, (const uint8_t *)input, input_size);
+    } else if (input_size < 0) {
+        print_error("read: ", strerror(errno));
+        return (NULL);
     }
     sha256_final(&context);
 	ft_memcpy(result, context.digest, sizeof(context.digest));

@@ -147,6 +147,7 @@ char *md5_file_func(int fd, uint8_t *result)
 	md5_ctx	context;
 	char	buffer[MAX_READ_BUFFER_SIZE + 1];
     size_t	input_size = 0;
+	size_t  total_read = 0; 
 	char 	*input = NULL;
 	
 	md5_init(&context);
@@ -156,7 +157,16 @@ char *md5_file_func(int fd, uint8_t *result)
 			buffer[input_size - 1] = '\0';
 		else 
 			buffer[input_size] = '\0';
-		input = ft_strjoin(input, buffer);
+        input = ft_strjoin(input, buffer);
+        total_read += input_size;
+    }
+
+	if (!input_size && !total_read) {
+        input = ft_strdup("");
+        md5_update(&context, (const uint8_t *)input, input_size);
+    } else if (input_size < 0) {
+        print_error("read: ", strerror(errno));
+        return (NULL);
     }
 	md5_final(&context);
 	ft_memcpy(result, context.digest, sizeof(context.digest));

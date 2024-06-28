@@ -3,14 +3,14 @@
 
 #include "md5.h"
 #include "sha256.h"
+#include "sha512.h"
 #include <fcntl.h>
-#include <errno.h>
 #include <string.h>
 
 # define MAX_FLAGS 4
 # define USAGE_CMD_ERROR "invalid command.\
                     \nCommands:\
-                    \n\tmd5 \n\tsha256\
+                    \n\tmd5 \n\tsha256\n\tsha512\
                     \nFlags:\
                     \n\t-p -q -r -s\n"
 # define USAGE_ERROR "./ft_ssl command [flags] [file/string]\n"
@@ -18,13 +18,16 @@
 # define command_token(cmd) (\
     ft_strcmp((cmd), "md5") == 0 ? MD5 : \
     ft_strcmp((cmd), "sha256") == 0 ? SHA256 : \
+    ft_strcmp((cmd), "sha512") == 0 ? SHA512 : \
     0)
+    
 # define APPEND 1
 # define QUIET 2
 # define REVERSE 3
 # define SUM 4
 # define MD5 16
 # define SHA256 32
+# define SHA512 64
 # define flags_token(cmd) (\
     ft_strcmp((cmd), "-p") == 0 ? APPEND : \
     ft_strcmp((cmd), "-q") == 0 ? QUIET : \
@@ -32,7 +35,9 @@
     ft_strcmp((cmd), "-s") == 0 ? SUM  : \
     0)
 # define command_str(cmd) (\
-    cmd == MD5 ? "MD5 " : "SHA256 ")
+    cmd == MD5 ? "MD5" : \
+    cmd == SHA256 ? "SHA-256" : \
+    "SHA-512")
 
 typedef struct {
 	int	quiet;
@@ -53,7 +58,7 @@ typedef struct s_ssl {
     void        (*str_print_func)(const char* input, uint8_t *result, size_t len);
     char*       (*file_func)(int fd, uint8_t *result);
     void        (*str_func)(const uint8_t *input, size_t input_size, uint8_t *result);
-    uint8_t     result[32];
+    uint8_t     result[64];
 } t_ssl;
 
 void    ft_ssl(t_ssl *data);

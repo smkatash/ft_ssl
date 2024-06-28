@@ -42,7 +42,7 @@ void    print_stdin(const char* input, uint8_t *cksm, size_t cksm_len)
 {
     (void)input;
     print_str(command_str(cksm_len));
-    print_str("(stdin) = ");
+    print_str("(stdin)= ");
     print_hex(cksm, cksm_len);
     print_str("\n");
 }
@@ -52,7 +52,7 @@ void    print_append_str(const char* input, uint8_t *cksm, size_t cksm_len)
     print_str(command_str(cksm_len));
     print_str("(\"");
     print_str(input);
-    print_str("\") = ");
+    print_str("\")= ");
     print_hex(cksm, cksm_len);
     print_str("\n");
 }
@@ -62,7 +62,7 @@ void    print_file(const char* input, uint8_t *cksm, size_t cksm_len)
     print_str(command_str(cksm_len));
     print_str("(");
     print_str(input);
-    print_str(") = ");
+    print_str(")= ");
     print_hex(cksm, cksm_len);
     print_str("\n");
 }

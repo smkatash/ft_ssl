@@ -9,7 +9,7 @@ static int open_file(const char *file)
     return fd;
 }
 
-static void    print_options(t_ssl *data) {
+static void    set_print_options(t_ssl *data) {
     if (data->opt.quiet) {
         data->stdin_print_func = print_quiet;
         data->file_print_func = print_quiet;
@@ -42,7 +42,7 @@ static void    print_options(t_ssl *data) {
 
 static void    exec_ssl(t_ssl *data)
 {
-    int hash_len = data->cmd == MD5 ? MD5 : SHA256;
+    int hash_len = data->cmd;
 
     if (!data->file || data->opt.append) {
         data->stdin_input = data->file_func(STDIN_FILENO, data->result);
@@ -73,6 +73,10 @@ static void init_ssl(t_ssl *data) {
             data->file_func = sha256_file_func;
             data->str_func = sha256_str_func;
             break;
+        case SHA512:
+            data->file_func = sha512_file_func;
+            data->str_func = sha512_str_func;
+            break;
         default:
             free(data);
             print_error("Error", USAGE_CMD_ERROR);
@@ -82,6 +86,6 @@ static void init_ssl(t_ssl *data) {
 
 void    ft_ssl(t_ssl *data) {
     init_ssl(data);
-    print_options(data);
+    set_print_options(data);
     exec_ssl(data);
 }

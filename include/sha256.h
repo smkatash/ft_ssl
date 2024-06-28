@@ -1,16 +1,9 @@
 #ifndef SHA256_H
 # define SHA256_H
-# include <stdio.h>
-# include <stdint.h>
-#include <unistd.h>
-#include <stdlib.h>
+
 #include "utils.h"
 
-# define ROTATE_RIGHT(a,b) (((a) >> (b)) | ((a) << (32-(b))))
-# define SHIFT_RIGHT(x, n) (x >> n)
-# define XOR ^
-# define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
-# define MAJ(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+# define ROTATE_RIGHT_32(a,b) (((a) >> (b)) | ((a) << (32-(b))))
 
 typedef struct {
 	uint32_t	state[8];

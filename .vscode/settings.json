@@ -18,6 +18,8 @@
         "utils.h": "c",
         "sstream": "c",
         "sha256.h": "c",
-        "ft_ssl.h": "c"
+        "ft_ssl.h": "c",
+        "istream": "c",
+        "errno.h": "c"
     }
 }

@@ -1,9 +1,6 @@
 #ifndef MD5_H
 # define MD5_H
-# include <stdio.h>
-# include <stdint.h>
-#include <unistd.h>
-#include <stdlib.h>
+
 #include "utils.h"
 /* magic constants */
 # define A_CONST 0x67452301
@@ -20,7 +17,7 @@
 # define SECOND_ROUND 2
 # define THIRD_ROUND 3
 # define FORTH_ROUND 4
-# define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32-(n))))
+
 # define ROUND(i) ( \
 	(i / 16) == 0 ? FIRST_ROUND :\
 	(i / 16) == 1 ? SECOND_ROUND :\
@@ -36,6 +33,5 @@ typedef struct {
 
 void    md5_str_func(const uint8_t *input, size_t input_size, uint8_t *result);
 char	*md5_file_func(int fd, uint8_t *result);
-void    print_bits(const uint8_t *msg, size_t len) ;
 
 #endif
