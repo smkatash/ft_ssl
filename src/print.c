@@ -38,6 +38,14 @@ void    print_quiet(const char* input, uint8_t *cksm, size_t cksm_len)
     print_str("\n");
 }
 
+void    print_quiet_stdin(const char* input, uint8_t *cksm, size_t cksm_len)
+{
+    print_str(input);
+    print_str("\n");
+    print_hex(cksm, cksm_len);
+    print_str("\n");
+}
+
 void    print_stdin(const char* input, uint8_t *cksm, size_t cksm_len)
 {
     (void)input;

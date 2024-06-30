@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <string.h>
 
+# define NUM_COMMANDS 3
+# define NUM_PRINT_OPTIONS 5
 # define MAX_FLAGS 4
 # define USAGE_CMD_ERROR "invalid command.\
                     \nCommands:\
@@ -61,6 +63,39 @@ typedef struct s_ssl {
     uint8_t     result[64];
 } t_ssl;
 
+typedef struct {
+    int   cmd;
+    char*(*file_func)(int fd, uint8_t *result);
+    void (*str_func)(const uint8_t*, size_t, uint8_t*);
+} ssl_command;
+
+typedef struct {
+    bool (*condition)(t_ssl *data);
+    void (*stdin_print_func)();
+    void (*file_print_func)();
+    void (*str_print_func)();
+} ssl_print_option;
+
+static inline bool is_quiet(t_ssl *data) {
+    return data->opt.quiet;
+}
+
+static inline bool is_quiet_and_append(t_ssl *data) {
+    return data->opt.quiet && data->opt.append;
+}
+
+static inline bool is_append_and_reverse(t_ssl *data) {
+    return data->opt.append && data->opt.reverse;
+}
+
+static inline bool is_append(t_ssl *data) {
+    return data->opt.append;
+}
+
+static inline bool is_reverse(t_ssl *data) {
+    return data->opt.reverse;
+}
+
 void    ft_ssl(t_ssl *data);
 void	parse_input(char **argv, int argc, t_ssl *data);
 void	free_data(t_ssl *data) ;
@@ -74,5 +109,6 @@ void    print_file(const char* input, uint8_t *cksm, size_t cksm_len);
 void    print_file_reversed(const char* input, uint8_t *cksm, size_t cksm_len);
 void    print_stdin(const char* input, uint8_t *cksm, size_t cksm_len);
 void    print_str_reversed(const char* input, uint8_t *cksm, size_t cksm_len);
+void    print_quiet_stdin(const char* input, uint8_t *cksm, size_t cksm_len);
 
 #endif
